@@ -19,6 +19,7 @@ private:
   static constexpr uint32_t TX_PDO_DIGITAL2 = 0X281;
   static constexpr uint32_t TX_PDO_ANALOG1 = 0X381;
   static constexpr uint32_t TX_PDO_ANALOG2 = 0X481;
+  static constexpr uint32_t ANALOG_RESOLUTION = 1023;
 
   byte start_transmitter_bit {};
   byte horn_bit {};

@@ -14,29 +14,47 @@ void JoyDecoder::decode(const SimpleCANData& can_data) {
 
 void JoyDecoder::sendToHost() {
 
-  // UPDATE THE ANALOG MAPPING HERE
-  Joystick.X(rotate_ccw_cw_analog);
-  Joystick.Y(backward_forward_analog);
-  Joystick.Z(strafing_left_right_analog);
-  Joystick.Zrotate(speed_control_analog);
+  // Joystick configuration here
+  Joystick.X(strafing_left_right_analog);
+  if(stop_auto_bit)
+  {
+    Joystick.Y(0);
+  }
+  else
+  {
+    Joystick.Y(speed_control_analog);
+  }
+  Joystick.Z(rotate_ccw_cw_analog);
+  Joystick.XRotate(backward_forward_analog);
+  Joystick.YRotate(ANALOG_RESOLUTION - (water_spray_bit * ANALOG_RESOLUTION));
+  Joystick.button(3, action_execution_bit);
+  Joystick.dial(action_execution_bit * ANALOG_RESOLUTION);
 
-  // UPDATE THE DIGITAL MAPPING HERE
-  Joystick.button(1, start_transmitter_bit);
-  Joystick.button(2, horn_bit);
-  Joystick.button(3, mode_manual_bit);
-  Joystick.button(4, mode_assisted_bit);
-  Joystick.button(5, mode_auto_bit);
-  Joystick.button(6, action_startengine_bit);
-  Joystick.button(7, action_run_bit);
-  Joystick.button(8, action_init_bit);
-  Joystick.button(9, a1_bit);
-  Joystick.button(10, a2_bit);
-  Joystick.button(11, b1_bit);
-  Joystick.button(12, b2_bit);
-  Joystick.button(13, stop_auto_bit);
-  Joystick.button(14, start_auto_bit);
-  Joystick.button(15, water_spray_bit);
-  Joystick.button(16, action_execution_bit);
+  if(mode_manual_bit)
+  {
+    Joystick.Zrotate(0);
+  }
+  else if(mode_assisted_bit)
+  {
+    Joystick.Zrotate(ANALOG_RESOLUTION/2);
+  }
+  else if(mode_auto_bit)
+  {
+    Joystick.Zrotate(ANALOG_RESOLUTION);
+  }
+
+  if(action_startengine_bit)
+  {
+      Joystick.slider(0);
+  }
+  else if(action_run_bit)
+  {
+      Joystick.slider(ANALOG_RESOLUTION/2);
+  }
+  else if(action_init_bit)
+  {
+      Joystick.slider(ANALOG_RESOLUTION);
+  }
 
   Joystick.send_now();
 }
@@ -74,13 +92,13 @@ void JoyDecoder::decodeDigital2(const SimpleCANData& can_data) {
 }
 
 void JoyDecoder::decodeAnalog1(const SimpleCANData& can_data) {
-  backward_forward_analog = map(can_data.buffer[0], -128, 127, 1023, 0);
-  rotate_ccw_cw_analog = map(can_data.buffer[1], -128, 127, 0, 1023);
-  strafing_left_right_analog = map(can_data.buffer[3], -128, 127, 0, 1023);
+  backward_forward_analog = map(can_data.buffer[0], -128, 127, 0, ANALOG_RESOLUTION);
+  rotate_ccw_cw_analog = map(can_data.buffer[1], -128, 127, ANALOG_RESOLUTION, 0);
+  strafing_left_right_analog = map(can_data.buffer[3], -128, 127, ANALOG_RESOLUTION, 0);
 }
 
 void JoyDecoder::decodeAnalog2(const SimpleCANData& can_data) {
-  speed_control_analog = map(can_data.buffer[0], 0, 127, 0, 1023);
+  speed_control_analog = map(can_data.buffer[0], 0, 127, 0, ANALOG_RESOLUTION);
 }
 
 }
