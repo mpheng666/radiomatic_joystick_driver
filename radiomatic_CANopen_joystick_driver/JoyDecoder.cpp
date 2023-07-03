@@ -13,7 +13,6 @@ void JoyDecoder::decode(const SimpleCANData& can_data) {
 }
 
 void JoyDecoder::sendToHost() {
-
   // Joystick configuration here
   Joystick.X(strafing_left_right_analog);
   if(stop_auto_bit)
@@ -24,6 +23,7 @@ void JoyDecoder::sendToHost() {
   {
     Joystick.Y(speed_control_analog);
   }
+
   Joystick.Z(rotate_ccw_cw_analog);
   Joystick.XRotate(backward_forward_analog);
   Joystick.YRotate(ANALOG_RESOLUTION - (water_spray_bit * ANALOG_RESOLUTION));
@@ -92,13 +92,13 @@ void JoyDecoder::decodeDigital2(const SimpleCANData& can_data) {
 }
 
 void JoyDecoder::decodeAnalog1(const SimpleCANData& can_data) {
-  backward_forward_analog = map(can_data.buffer[0], -128, 127, 0, ANALOG_RESOLUTION);
-  rotate_ccw_cw_analog = map(can_data.buffer[1], -128, 127, ANALOG_RESOLUTION, 0);
-  strafing_left_right_analog = map(can_data.buffer[3], -128, 127, ANALOG_RESOLUTION, 0);
+  backward_forward_analog = map(can_data.buffer[0], -128, 127, 0, ANALOG_RESOLUTION*SCALING_FACTOR);
+  rotate_ccw_cw_analog = map(can_data.buffer[1], -128, 127, ANALOG_RESOLUTION*SCALING_FACTOR, 0);
+  strafing_left_right_analog = map(can_data.buffer[3], -128, 127, ANALOG_RESOLUTION*SCALING_FACTOR, 0);
 }
 
 void JoyDecoder::decodeAnalog2(const SimpleCANData& can_data) {
-  speed_control_analog = map(can_data.buffer[0], 0, 127, 0, ANALOG_RESOLUTION);
+  speed_control_analog = map(can_data.buffer[0], 0, 127, 0.2*ANALOG_RESOLUTION, 0.84*ANALOG_RESOLUTION);
 }
 
 }
