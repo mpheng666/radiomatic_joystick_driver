@@ -20,7 +20,7 @@ private:
   static constexpr uint32_t TX_PDO_ANALOG1 = 0X381;
   static constexpr uint32_t TX_PDO_ANALOG2 = 0X481;
   static constexpr uint32_t ANALOG_RESOLUTION = 1023;
-  static constexpr double SCALING_FACTOR = 0.67;
+  static constexpr double SCALING_FACTOR = 1.0;
 
   byte start_transmitter_bit {};
   byte horn_bit {};
@@ -42,6 +42,7 @@ private:
   long backward_forward_analog {};
   long strafing_left_right_analog {};
   long speed_control_analog {};
+  bool is_estop {false};
 
   const std::unordered_map<uint32_t, decode_function_ptr> DECODE_MAP_{
     { TX_PDO_DIGITAL1, &JoyDecoder::decodeDigital1 },

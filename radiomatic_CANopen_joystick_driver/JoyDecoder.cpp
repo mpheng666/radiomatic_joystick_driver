@@ -15,7 +15,7 @@ void JoyDecoder::decode(const SimpleCANData& can_data) {
 void JoyDecoder::sendToHost() {
   // Joystick configuration here
   Joystick.X(strafing_left_right_analog);
-  if(stop_auto_bit)
+  if(stop_auto_bit || is_estop)
   {
     Joystick.Y(0);
   }
@@ -72,6 +72,14 @@ void JoyDecoder::decodeDigital1(const SimpleCANData& can_data) {
   for (int i = 0; i < 8; ++i) {
     const byte ESTOP_BIT = (can_data.buffer[7] >> i) & 1;
     Joystick.button(i + 17, ESTOP_BIT);
+    if(ESTOP_BIT)
+    {
+      is_estop = true;
+      break;
+    }
+    else {
+      is_estop = false;
+    }
   }
 }
 
